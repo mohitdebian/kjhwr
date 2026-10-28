@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: wind-day-ahead-desk
+    env: docker
+    plan: free
+    region: oregon
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 8000
