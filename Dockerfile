@@ -12,7 +12,7 @@ WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PORT=8000
+    PORT=8080
 
 # Install Python dependencies
 COPY backend/requirements.txt ./backend/
@@ -24,6 +24,6 @@ COPY backend/ ./backend/
 # Copy built frontend assets from stage 1
 COPY --from=frontend-builder /build/frontend/dist ./frontend/dist
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn backend.app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

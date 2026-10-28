@@ -55,14 +55,9 @@ class ElexonDataManager:
         valid = [f for f in fcs if f["publishTime"] <= cutoff_iso]
         if valid:
             return float(valid[-1]["generation"])
-        # If no forecast published before gate closure, fall back to earliest available
         return float(fcs[0]["generation"]) if fcs else None
 
     def get_day_data(self, delivery_date: str, gate_closure_hour: int = 11, assumed_demand_mw: float = 32000.0) -> Dict[str, Any]:
-        """
-        Computes day-ahead forecast vs actuals for a specific delivery date.
-        Gate closure is assumed to occur on (delivery_date - 1) at gate_closure_hour:00:00Z.
-        """
         try:
             curr_date = datetime.strptime(delivery_date, "%Y-%m-%d")
         except ValueError:
@@ -75,7 +70,6 @@ class ElexonDataManager:
         actual_vals = []
         forecast_vals = []
         
-        # Filter actuals for this delivery date
         day_actuals = [
             item for item in self.actuals
             if (item.get("settlementDate") == delivery_date) or (item["startTime"][:10] == delivery_date)
@@ -89,9 +83,9 @@ class ElexonDataManager:
             
             fc_gen = self.get_day_ahead_forecast(s_time, gate_closure_iso)
             if fc_gen is None:
-                fc_gen = act_gen # fallback if completely missing
+                fc_gen = act_gen
                 
-            error_mw = round(act_gen - fc_gen, 1) # Positive = surplus actual, Negative = deficit
+            error_mw = round(act_gen - fc_gen, 1)
             residual_needed = round(calculate_residual_procurement(fc_gen, assumed_demand_mw), 1)
             actual_residual = round(calculate_residual_procurement(act_gen, assumed_demand_mw), 1)
             
@@ -101,7 +95,7 @@ class ElexonDataManager:
             periods.append({
                 "startTime": s_time,
                 "settlementPeriod": sp,
-                "timeLabel": s_time[11:16], # HH:MM
+                "timeLabel": s_time[11:16],
                 "actualMW": round(act_gen, 1),
                 "forecastMW": round(fc_gen, 1),
                 "errorMW": error_mw,
@@ -123,9 +117,6 @@ class ElexonDataManager:
         }
 
     def get_month_overview(self, gate_closure_hour: int = 11) -> Dict[str, Any]:
-        """
-        Computes aggregate metrics and daily summaries for all of January 2026.
-        """
         all_actuals = []
         all_forecasts = []
         daily_summaries = []
@@ -161,10 +152,6 @@ class ElexonDataManager:
         }
 
     def get_settlement_period_profile(self, gate_closure_hour: int = 11) -> List[Dict[str, Any]]:
-        """
-        Averages performance by settlement period (1 to 48) across all 31 days.
-        Highlights diurnal forecast error patterns (e.g. morning ramp vs peak evening).
-        """
         sp_data: Dict[int, Dict[str, List[float]]] = {
             i: {"actuals": [], "forecasts": [], "errors": []} for i in range(1, 49)
         }
@@ -186,7 +173,6 @@ class ElexonDataManager:
             fcs = sp_data[sp]["forecasts"]
             errs = sp_data[sp]["errors"]
             n = len(acts)
-            # Time calculation: SP 1 is 00:00 - 00:30
             hours = (sp - 1) // 2
             minutes = 30 if (sp % 2 == 0) else 0
             label = f"{hours:02d}:{minutes:02d}"
@@ -209,33 +195,28 @@ class ElexonDataManager:
         return profile
 
     def get_error_distribution(self, gate_closure_hour: int = 11) -> Dict[str, Any]:
-        """
-        Calculates error distribution buckets for trading risk sizing.
-        """
         errors = []
         for date_str in self.available_dates:
             day_res = self.get_day_data(date_str, gate_closure_hour)
             for p in day_res["periods"]:
-                errors.append(p["errorMW"]) # actual - forecast
+                errors.append(p["errorMW"])
                 
-        # Bucket errors into histogram intervals (e.g. step of 500 MW)
-        # Ranges: < -2000, -2000 to -1500, ..., 1500 to 2000, > 2000
-        buckets = [
-            {"range": "< -2000 MW", "min": -float("inf"), "max": -2000, "count": 0},
-            {"range": "-2000 to -1000", "min": -2000, "max": -1000, "count": 0},
-            {"range": "-1000 to -500", "min": -1000, "max": -500, "count": 0},
-            {"range": "-500 to 0", "min": -500, "max": 0, "count": 0},
-            {"range": "0 to 500", "min": 0, "max": 500, "count": 0},
-            {"range": "500 to 1000", "min": 500, "max": 1000, "count": 0},
-            {"range": "1000 to 2000", "min": 1000, "max": 2000, "count": 0},
-            {"range": "> 2000 MW", "min": 2000, "max": float("inf"), "count": 0},
+        # Use explicit finite ranges for JSON compliance
+        thresholds = [
+            ("< -2000 MW", -1000000, -2000),
+            ("-2000 to -1000", -2000, -1000),
+            ("-1000 to -500", -1000, -500),
+            ("-500 to 0", -500, 0),
+            ("0 to 500", 0, 500),
+            ("500 to 1000", 500, 1000),
+            ("1000 to 2000", 1000, 2000),
+            ("> 2000 MW", 2000, 1000000),
         ]
         
-        for err in errors:
-            for b in buckets:
-                if b["min"] <= err < b["max"]:
-                    b["count"] += 1
-                    break
+        buckets = []
+        for label, low, high in thresholds:
+            count = sum(1 for e in errors if low <= e < high)
+            buckets.append({"range": label, "count": count})
                     
         return {
             "totalSamples": len(errors),
