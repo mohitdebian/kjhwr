@@ -24,14 +24,11 @@ export function WindForecastChart({ periods = [] }) {
   const getX = (idx) => padLeft + (idx / (periods.length - 1)) * plotWidth;
   const getY = (val) => padTop + plotHeight - (val / topVal) * plotHeight;
 
-  // Build SVG paths
   const actualPath = periods.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(p.actualMW)}`).join(' ');
   const forecastPath = periods.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${getX(idx)} ${getY(p.forecastMW)}`).join(' ');
 
-  // Area under curves
   const forecastArea = `${forecastPath} L ${getX(periods.length - 1)} ${padTop + plotHeight} L ${getX(0)} ${padTop + plotHeight} Z`;
 
-  // Y-axis gridlines
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map(r => Math.round((topVal * r) / 1000) * 1000);
 
   const activePeriod = hoveredIdx !== null ? periods[hoveredIdx] : null;
@@ -68,7 +65,6 @@ export function WindForecastChart({ periods = [] }) {
           </linearGradient>
         </defs>
 
-        {/* Y Gridlines */}
         {yTicks.map((tick, i) => {
           const yPos = getY(tick);
           return (
@@ -81,16 +77,12 @@ export function WindForecastChart({ periods = [] }) {
           );
         })}
 
-        {/* Forecast Area */}
         <path d={forecastArea} fill="url(#fcGrad)" />
 
-        {/* Forecast Line */}
         <path d={forecastPath} fill="none" stroke="#06B6D4" strokeWidth="2.5" strokeDasharray="5 3" />
 
-        {/* Actuals Line */}
         <path d={actualPath} fill="none" stroke="#10B981" strokeWidth="2.5" />
 
-        {/* X Axis Labels */}
         {periods.map((p, idx) => {
           if (idx % 6 === 0 || idx === periods.length - 1) {
             const x = getX(idx);
@@ -106,7 +98,6 @@ export function WindForecastChart({ periods = [] }) {
           return null;
         })}
 
-        {/* Hover interaction points */}
         {periods.map((p, idx) => {
           const x = getX(idx);
           const isHovered = hoveredIdx === idx;
@@ -178,7 +169,6 @@ export function ResidualDemandChart({ periods = [], demandMW = 32000 }) {
         <path d={plannedPath} fill="none" stroke="#F59E0B" strokeWidth="2.5" />
         <path d={actualPath} fill="none" stroke="#A855F7" strokeWidth="2" strokeDasharray="4 2" />
 
-        {/* X Axis */}
         {periods.map((p, idx) => {
           if (idx % 8 === 0 || idx === periods.length - 1) {
             const x = getX(idx);

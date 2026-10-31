@@ -21,7 +21,6 @@ class TestWindPlatform(unittest.TestCase):
 
     def test_calculate_residual_procurement(self):
         self.assertEqual(calculate_residual_procurement(wind_mw=12000, demand_mw=30000), 18000)
-        # Surplus wind exceeding demand
         self.assertEqual(calculate_residual_procurement(wind_mw=35000, demand_mw=30000), 0.0)
 
     def test_elexon_data_loaded(self):
@@ -30,15 +29,12 @@ class TestWindPlatform(unittest.TestCase):
         self.assertGreater(len(data_manager.forecasts), 10000)
 
     def test_gate_closure_rigor(self):
-        # Target delivery day: 2026-01-15.
-        # Gate closure at 11:00 GMT on 2026-01-14.
         cutoff = "2026-01-14T11:00:00Z"
         target_sp_time = "2026-01-15T12:00:00Z"
         fc = data_manager.get_day_ahead_forecast(target_sp_time, cutoff)
         self.assertIsNotNone(fc)
         self.assertGreater(fc, 0)
 
-        # Ensure no forecast published after cutoff is selected
         raw_fcs = data_manager.forecasts_by_target.get(target_sp_time, [])
         valid_fcs = [f for f in raw_fcs if f["publishTime"] <= cutoff]
         if valid_fcs:
@@ -51,7 +47,6 @@ class TestWindPlatform(unittest.TestCase):
         self.assertEqual(res["metrics"]["count"], 48)
         self.assertGreater(res["metrics"]["mae"], 0)
         
-        # Check period schema
         first_p = res["periods"][0]
         self.assertIn("settlementPeriod", first_p)
         self.assertIn("actualMW", first_p)

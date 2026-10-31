@@ -16,7 +16,6 @@ def fetch_json(url):
 def fetch_actuals():
     print("[1/2] Fetching January 2026 FUELHH actuals from Elexon...")
     all_actuals = []
-    # Fetch in 5-day windows from 2026-01-01 to 2026-02-01
     start = datetime(2026, 1, 1, 0, 0, 0)
     end = datetime(2026, 2, 1, 1, 0, 0)
     curr = start
@@ -43,7 +42,6 @@ def fetch_actuals():
             print(f"    Error fetching FUELHH {from_str}: {e}")
         curr = next_dt
     
-    # Deduplicate by startTime keeping latest
     dedup = {r["startTime"]: r for r in all_actuals}
     sorted_actuals = sorted(dedup.values(), key=lambda x: x["startTime"])
     print(f"  Total unique January 2026 wind actuals: {len(sorted_actuals)}")
@@ -52,7 +50,6 @@ def fetch_actuals():
 def fetch_forecasts():
     print("[2/2] Fetching WINDFOR forecasts from Elexon...")
     all_forecasts = []
-    # WINDFOR forecasts published from Dec 30 2025 to Jan 31 2026
     start = datetime(2025, 12, 30, 0, 0, 0)
     end = datetime(2026, 1, 31, 23, 59, 59)
     curr = start
@@ -64,7 +61,6 @@ def fetch_forecasts():
         print(f"  Fetching WINDFOR {from_str} -> {to_str}...")
         try:
             records = fetch_json(url)
-            # We only care about forecasts targeting January 2026 (startTime starts with 2026-01)
             filtered = [
                 {
                     "publishTime": r["publishTime"],

@@ -26,10 +26,8 @@ class ElexonDataManager:
         self.actuals = data.get("actuals", [])
         self.forecasts = data.get("forecasts", [])
         
-        # Index actuals by startTime
         self.actuals_by_time = {item["startTime"]: item for item in self.actuals}
         
-        # Group forecasts by target startTime, sorted by publishTime ascending
         self.forecasts_by_target = {}
         for f in self.forecasts:
             t = f["startTime"]
@@ -40,7 +38,6 @@ class ElexonDataManager:
         for t in self.forecasts_by_target:
             self.forecasts_by_target[t].sort(key=lambda x: x["publishTime"])
             
-        # Get list of unique dates in January 2026
         dates = sorted(list(set(
             item.get("settlementDate") or item["startTime"][:10]
             for item in self.actuals if item["startTime"].startswith("2026-01")
@@ -48,9 +45,6 @@ class ElexonDataManager:
         self.available_dates = dates
 
     def get_day_ahead_forecast(self, target_time: str, cutoff_iso: str) -> Optional[float]:
-        """
-        Returns the latest forecast generation (MW) published before or at cutoff_iso.
-        """
         fcs = self.forecasts_by_target.get(target_time, [])
         valid = [f for f in fcs if f["publishTime"] <= cutoff_iso]
         if valid:
@@ -201,7 +195,6 @@ class ElexonDataManager:
             for p in day_res["periods"]:
                 errors.append(p["errorMW"])
                 
-        # Use explicit finite ranges for JSON compliance
         thresholds = [
             ("< -2000 MW", -1000000, -2000),
             ("-2000 to -1000", -2000, -1000),
@@ -223,5 +216,4 @@ class ElexonDataManager:
             "buckets": buckets
         }
 
-# Global instance for FastAPI
 data_manager = ElexonDataManager()

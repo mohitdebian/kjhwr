@@ -10,7 +10,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom scrollbars for data tables */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

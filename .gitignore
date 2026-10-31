@@ -1,4 +1,3 @@
-# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -8,18 +7,15 @@ env/
 venv/
 ENV/
 
-# Node
 node_modules/
 frontend/node_modules/
 frontend/dist/
 .npm
 
-# IDE / OS
 .DS_Store
 .idea/
 .vscode/
 *.swp
 *.swo
 
-# Docker
 .docker/

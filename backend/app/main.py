@@ -11,7 +11,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -66,7 +65,6 @@ def get_distribution(gate_closure: int = Query(11, ge=0, le=23)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Mount static build files for production single-container deployment
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "frontend", "dist")
 if os.path.exists(frontend_dist):
     app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")

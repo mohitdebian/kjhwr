@@ -17,7 +17,6 @@ export default function ErrorAnalytics({
 
   return (
     <div className="space-y-6">
-      {/* Month Executive Summary Banner */}
       <div className="bg-gradient-to-r from-cyan-950/40 via-slate-900 to-slate-900 border border-cyan-800/40 rounded-xl p-5 shadow-xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
@@ -45,7 +44,6 @@ export default function ErrorAnalytics({
         </div>
       </div>
 
-      {/* KPI Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           title="Overall MAE"
@@ -82,7 +80,6 @@ export default function ErrorAnalytics({
         />
       </div>
 
-      {/* Daily Performance Timeline */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
         <div className="flex justify-between items-center mb-3">
           <div>
@@ -103,7 +100,6 @@ export default function ErrorAnalytics({
         <MonthlyOverviewChart daily={daily} onSelectDate={onSelectDate} selectedDate={selectedDate} />
       </div>
 
-      {/* Diurnal Error Profile (Settlement Periods 1-48) */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
         <div className="mb-3">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -117,9 +113,7 @@ export default function ErrorAnalytics({
         <SettlementPeriodBarChart profile={profileData} />
       </div>
 
-      {/* Error Distribution & Quantitative Buffer Recommendation */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Error Frequency Buckets */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
           <h3 className="text-base font-bold text-white mb-1">Forecast Error Distribution (Actual - Forecast)</h3>
           <p className="text-xs text-slate-400 mb-4">Sample counts across error ranges (1,488 half-hours)</p>
@@ -146,7 +140,6 @@ export default function ErrorAnalytics({
           </div>
         </div>
 
-        {/* Actionable Trading Desk Insights */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col justify-between">
           <div>
             <h3 className="text-base font-bold text-white mb-2 flex items-center gap-2">

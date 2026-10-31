@@ -15,7 +15,6 @@ export default function App() {
   const [distributionData, setDistributionData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch month overview, profile, and distribution
   useEffect(() => {
     const fetchAggregates = async () => {
       try {
@@ -34,7 +33,6 @@ export default function App() {
     fetchAggregates();
   }, [gateClosureHour]);
 
-  // Fetch day-specific data
   useEffect(() => {
     const fetchDay = async () => {
       setLoading(true);
@@ -55,10 +53,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Top Navigation Bar */}
       <header className="sticky top-0 z-30 bg-slate-900/90 border-b border-slate-800 backdrop-blur px-4 lg:px-8 py-3">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Logo & Platform Info */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
               <Wind className="text-white" size={20} />
@@ -74,7 +70,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navigation Tabs */}
           <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
             <button
               onClick={() => setActiveTab('desk')}
@@ -111,7 +106,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Live System Indicator */}
           <div className="hidden lg:flex items-center gap-2 text-xs text-slate-400 font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Elexon BMRS Jan 2026 Loaded (1,488 SPs)</span>
@@ -119,7 +113,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6">
         {activeTab === 'desk' && (
           <DecisionDesk
@@ -188,8 +181,6 @@ export default function App() {
           </div>
         )}
       </main>
-
-      {/* Footer */}
       <footer className="border-t border-slate-800/80 bg-slate-950 px-4 py-4 text-center text-xs text-slate-500 font-mono">
         Gridbricks Pilot Assessment • UK Day-Ahead Wind Forecast & Error Analytics Platform (January 2026)
       </footer>

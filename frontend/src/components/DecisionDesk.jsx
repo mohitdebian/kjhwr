@@ -49,10 +49,8 @@ export default function DecisionDesk({
 
   return (
     <div className="space-y-6">
-      {/* Top Interactive Controls Panel */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl backdrop-blur">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-          {/* Target Delivery Date */}
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
               Target Delivery Day (Jan 2026)
@@ -70,7 +68,6 @@ export default function DecisionDesk({
             </select>
           </div>
 
-          {/* Day-Ahead Gate Closure Time */}
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -95,7 +92,6 @@ export default function DecisionDesk({
             </div>
           </div>
 
-          {/* Consumer Demand Baseline */}
           <div>
             <div className="flex justify-between items-center mb-1.5">
               <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -131,7 +127,6 @@ export default function DecisionDesk({
         </div>
       </div>
 
-      {/* KPI Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <MetricCard
           title="Day MAE"
@@ -168,7 +163,6 @@ export default function DecisionDesk({
         />
       </div>
 
-      {/* Primary Chart: Wind Generation vs Forecast */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
           <div>
@@ -190,7 +184,6 @@ export default function DecisionDesk({
         <WindForecastChart periods={periods} />
       </div>
 
-      {/* Secondary Chart: Thermal Procurement Residual */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
         <div className="mb-4">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -204,7 +197,6 @@ export default function DecisionDesk({
         <ResidualDemandChart periods={periods} demandMW={demandMW} />
       </div>
 
-      {/* Half-Hour Settlement Period Data Table */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-xl">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
           <div>

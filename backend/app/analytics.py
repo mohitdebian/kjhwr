@@ -2,14 +2,6 @@ import math
 from typing import List, Dict, Any
 
 def compute_metrics(actuals: List[float], forecasts: List[float]) -> Dict[str, Any]:
-    """
-    Computes industry-standard wind forecast accuracy metrics:
-    - MAE (Mean Absolute Error) in MW
-    - RMSE (Root Mean Square Error) in MW
-    - Bias / Mean Error (Forecast - Actual) in MW (+ = over-forecasting, - = under-forecasting)
-    - WAPE (Weighted Absolute Percentage Error) in %: sum(|act - fc|) / sum(act) * 100
-    - P10, P50, P90 of Error Delta (Actual - Forecast)
-    """
     if not actuals or not forecasts or len(actuals) != len(forecasts):
         return {
             "mae": 0.0, "rmse": 0.0, "bias": 0.0, "wape": 0.0,
@@ -20,7 +12,7 @@ def compute_metrics(actuals: List[float], forecasts: List[float]) -> Dict[str, A
     abs_errors = [abs(a - f) for a, f in zip(actuals, forecasts)]
     sq_errors = [(a - f) ** 2 for a, f in zip(actuals, forecasts)]
     biases = [f - a for a, f in zip(actuals, forecasts)]
-    deltas = sorted([a - f for a, f in zip(actuals, forecasts)]) # actual - forecast
+    deltas = sorted([a - f for a, f in zip(actuals, forecasts)])
 
     mae = sum(abs_errors) / n
     rmse = math.sqrt(sum(sq_errors) / n)
@@ -51,5 +43,4 @@ def compute_metrics(actuals: List[float], forecasts: List[float]) -> Dict[str, A
     }
 
 def calculate_residual_procurement(wind_mw: float, demand_mw: float) -> float:
-    """Calculates thermal/market procurement needed beyond wind."""
     return max(0.0, demand_mw - wind_mw)
